@@ -1,38 +1,117 @@
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+import Navbar from "./components/Navbar";
+import HeroBanner from "./components/HeroBanner";
+import MovieCarousel from "./components/MovieCarousel";
+import VideoPlayer from "./components/VideoPlayer";
+import { Toaster } from "./components/ui/toaster";
+import { trendingMovies, popularMovies, topRatedMovies, comedyMovies, horrorMovies, actionMovies } from "./data/mockData";
 
 const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [isVideoPlayerOpen, setIsVideoPlayerOpen] = useState(false);
+
+  const handlePlayMovie = (movie) => {
+    setSelectedMovie(movie);
+    setIsVideoPlayerOpen(true);
+  };
+
+  const closeVideoPlayer = () => {
+    setIsVideoPlayerOpen(false);
+    setSelectedMovie(null);
   };
 
   useEffect(() => {
-    helloWorldApi();
+    // Add custom scrollbar styles
+    const style = document.createElement('style');
+    style.textContent = `
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
   }, []);
 
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
+    <div className="min-h-screen bg-black">
+      {/* Navigation */}
+      <Navbar />
+
+      {/* Hero Banner */}
+      <HeroBanner onPlayMovie={handlePlayMovie} />
+
+      {/* Movie Carousels */}
+      <div className="relative -mt-32 z-10">
+        <MovieCarousel
+          title="Trending Now"
+          movies={trendingMovies}
+          onPlayMovie={handlePlayMovie}
+        />
+        
+        <MovieCarousel
+          title="Popular on Netflix"
+          movies={popularMovies}
+          onPlayMovie={handlePlayMovie}
+        />
+        
+        <MovieCarousel
+          title="Top Rated"
+          movies={topRatedMovies}
+          onPlayMovie={handlePlayMovie}
+        />
+        
+        <MovieCarousel
+          title="Action Movies"
+          movies={actionMovies}
+          onPlayMovie={handlePlayMovie}
+        />
+        
+        <MovieCarousel
+          title="Comedy Movies"
+          movies={comedyMovies}
+          onPlayMovie={handlePlayMovie}
+        />
+        
+        <MovieCarousel
+          title="Horror Movies"
+          movies={horrorMovies}
+          onPlayMovie={handlePlayMovie}
+        />
+      </div>
+
+      {/* Footer Spacing */}
+      <div className="h-20"></div>
+
+      {/* Video Player Modal */}
+      <VideoPlayer
+        movie={selectedMovie}
+        isOpen={isVideoPlayerOpen}
+        onClose={closeVideoPlayer}
+      />
+
+      {/* Toast Notifications */}
+      <Toaster />
     </div>
   );
 };
