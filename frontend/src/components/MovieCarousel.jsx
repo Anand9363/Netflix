@@ -10,6 +10,7 @@ const MovieCard = ({ movie, onPlay }) => {
       className="relative group cursor-pointer transition-all duration-300 transform hover:scale-110 hover:z-20"
       onMouseEnter={() => setShowDetails(true)}
       onMouseLeave={() => setShowDetails(false)}
+      onClick={() => onPlay(movie)}
     >
       {/* Movie Poster */}
       <div className="relative w-48 h-72 rounded-lg overflow-hidden shadow-lg">
@@ -23,15 +24,12 @@ const MovieCard = ({ movie, onPlay }) => {
         {/* Hover Overlay */}
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${
           showDetails ? 'opacity-100' : 'opacity-0'
-        }`}>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Button
-              onClick={() => onPlay(movie)}
-              className="bg-white text-black hover:bg-gray-200 rounded-full p-3 transform transition-transform duration-200 hover:scale-110"
-            >
-              <Play className="h-6 w-6 fill-current" />
-            </Button>
-          </div>
+        } flex items-center justify-center`}>
+          <Button
+            className="bg-white text-black hover:bg-gray-200 rounded-full p-3 transform transition-transform duration-200 hover:scale-110"
+          >
+            <Play className="h-6 w-6 fill-current" />
+          </Button>
         </div>
       </div>
 
